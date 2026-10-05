@@ -3,6 +3,7 @@ package com.example.mod.events
 import com.example.mod.events.impl.ChatReceive
 import com.example.mod.events.impl.WorldRenderBeforeBlockOutline
 import com.example.mod.events.impl.WorldRenderBeforeGizmos
+import com.example.mod.events.impl.packet.SlotChangeEventHandler
 import com.example.mod.events.impl.packet.TeleportEventHandler
 import com.example.mod.events.impl.packet.VelocityEventHandler
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
@@ -12,6 +13,7 @@ object FabricProvidedEvents {
     fun register() {
         TeleportEventHandler.init()
         VelocityEventHandler.init()
+        SlotChangeEventHandler.init()
 
         ClientReceiveMessageEvents.CHAT.register { component, message, profile, bound, instant ->
             EventManager.post(ChatReceive(component, message, profile, bound, instant))
