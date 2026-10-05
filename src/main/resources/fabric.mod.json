@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "modbase",
+	"version": "${version}",
+	"name": "modbase",
+	"description": "auto-generated mod from https://github.com/oblongboot/ModBase",
+	"authors": [
+		"oblongboot (from template)"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/modbase/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "com.example.mod.ModInit",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"modbase.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}
