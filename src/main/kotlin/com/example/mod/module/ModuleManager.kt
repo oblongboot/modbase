@@ -1,5 +1,6 @@
 package com.example.mod.module
 
+import com.example.mod.utils.Logger
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -106,7 +107,7 @@ object ModuleManager {
                 gson.fromJson(reader, JsonObject::class.java)
             }
         }.getOrElse {
-            println("Failed to load module config: ${it.message}")
+            Logger.error("Failed to load module config: ${it.message}")
             return
         }
 
@@ -180,7 +181,7 @@ object ModuleManager {
             }.getOrNull()
 
             else -> {
-                println(
+                Logger.error(
                     "Unsupported setting type for '${setting.name}': " + setting.default!!::class.simpleName
                 )
 
@@ -189,7 +190,7 @@ object ModuleManager {
         }
 
         if (value == null) {
-            println(
+            Logger.error(
                 "Failed to load setting '${setting.name}'"
             )
 

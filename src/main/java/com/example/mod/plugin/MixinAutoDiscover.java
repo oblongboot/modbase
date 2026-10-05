@@ -1,5 +1,6 @@
 package com.example.mod.plugin;
 
+import com.example.mod.utils.Logger;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -22,23 +23,23 @@ public class MixinAutoDiscover implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
-        System.out.println("hey!");
+        Logger.debug("hey!");
         this.mixinPackage = mixinPackage;
     }
 
     @Override
     public List<String> getMixins() {
         String packagePath = mixinPackage.replace('.', '/');
-        System.out.println("getting mixins");
+        Logger.debug("getting mixins");
         try {
             Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(packagePath);
-            System.out.println("in try");
+            Logger.debug("in try");
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                System.out.println("while: " + url);
-                System.out.println("protocol: " + url.getProtocol());
+                Logger.debug("while: " + url);
+                Logger.debug("protocol: " + url.getProtocol());
                 if ("jar".equals(url.getProtocol())) {
-                    System.out.println("jar");
+                    Logger.debug("jar");
                     JarURLConnection connection = (JarURLConnection) url.openConnection();
 
                     scanJar(connection.getJarFile(), packagePath, mixins);
@@ -77,7 +78,7 @@ public class MixinAutoDiscover implements IMixinConfigPlugin {
             }
 
             String className = name.substring(0, name.length() - ".class".length()).replace('/', '.');
-            System.out.println(className);
+            Logger.debug(className);
             mixins.add(className.substring(mixinPackage.length() + 1));
         }
     }
@@ -106,7 +107,7 @@ public class MixinAutoDiscover implements IMixinConfigPlugin {
 
             String className = name.substring(0, name.length() - ".class".length());
 
-            System.out.println("found mixin: " + className);
+            Logger.debug("found mixin: " + className);
 
             mixins.add(className);
         }

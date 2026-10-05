@@ -11,7 +11,7 @@ object ChatUtils {
         val player = Minecraft.getInstance().player
 
         if (player === null) {
-            println("failed to send message, null player. message is $msg")
+            Logger.error("failed to send message, null player. message is $msg")
             return@modMessage
         }
         Minecraft.getInstance().execute {
