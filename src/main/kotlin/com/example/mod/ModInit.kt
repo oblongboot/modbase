@@ -8,6 +8,9 @@ import com.example.mod.events.impl.BlockChangeEvent
 import com.example.mod.events.impl.packet.impl.SelfVelocityChangeEvent
 import com.example.mod.events.impl.packet.impl.SlotChangeEvent
 import com.example.mod.events.impl.packet.impl.TeleportEvent
+import com.example.mod.module.ConfigManager
+import com.example.mod.module.ModState
+import com.example.mod.module.ModuleManager
 import com.example.mod.utils.ChatUtils
 import com.example.mod.utils.Logger
 import net.fabricmc.api.ModInitializer
@@ -24,10 +27,16 @@ object ModInit : ModInitializer {
 		)
 
 		FabricProvidedEvents.register()
-
+		ModuleManager.setModState(ModState.RELEASE)
+		ModuleManager.register("com.example.mod.module.impl")
+		ConfigManager.load()
 		CommandRegistry.init()
 
 		Logger.debug("mod init! :D")
+
+		Runtime.getRuntime().addShutdownHook(Thread {
+			ConfigManager.save()
+		})
 	}
 
 	fun id(path: String): Identifier = Identifier.fromNamespaceAndPath(MOD_ID, path)

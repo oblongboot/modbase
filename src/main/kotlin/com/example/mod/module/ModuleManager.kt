@@ -1,23 +1,20 @@
 package com.example.mod.module
 
+import com.example.mod.module.annotation.AlphaModule
+import com.example.mod.module.annotation.BetaModule
+import com.example.mod.module.annotation.DevModule
+import com.example.mod.module.annotation.ReleaseModule
+import com.example.mod.utils.ClassScanner
 import com.example.mod.utils.Logger
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import java.io.File
+import net.fabricmc.loader.api.FabricLoader
 
 object ModuleManager {
-    private val configDir = File("config/modbase")
-    private val configFile = File(configDir, "config.json")
-    private val backupFile = File(configDir, "config.json.bak")
-
-    private val gson = GsonBuilder().setPrettyPrinting().create()
-
+    private var modState: ModState = ModState.RELEASE
     private val modules = LinkedHashMap<String, Module>()
 
-    fun init() {
-        //registerModules() // not yet!
-        load()
+    internal fun setModState(modState: ModState) {
+        this.modState = modState
+        Logger.debug("mod state is $modState")
     }
 
     fun register(module: Module) {
@@ -30,6 +27,53 @@ object ModuleManager {
         modules[id] = module
     }
 
+    private fun canUse(clazz: Class<*>): Boolean {
+        if (clazz.isAnnotationPresent(DevModule::class.java)) {
+            if (!FabricLoader.getInstance().isDevelopmentEnvironment) return false
+
+            Logger.debug("registering dev module ${clazz.simpleName}")
+            return true
+        }
+
+        if (clazz.isAnnotationPresent(BetaModule::class.java)) {
+            if (modState == ModState.BETA || modState == ModState.ALPHA) {
+                Logger.debug("registering beta module ${clazz.simpleName}")
+                return true
+            }
+        }
+
+        if (clazz.isAnnotationPresent(AlphaModule::class.java)) {
+            if (modState != ModState.ALPHA) return false
+
+            Logger.debug("registering alpha module ${clazz.simpleName}")
+            return true
+        }
+
+        if (clazz.isAnnotationPresent(ReleaseModule::class.java)) {
+            Logger.debug("registering release module ${clazz.simpleName}")
+            return true
+        }
+
+        return false
+    }
+
+    /*
+    * this auto discovers the modules and includes/ignores the relevant annotations, see annotation package
+     */
+    fun register(packagePath: String) {
+        val csr = ClassScanner.find(packagePath)
+
+        if (csr.isEmpty()) Logger.debug("no classes found in module")
+
+        for (classes in csr) {
+            Logger.debug("found $classes")
+            val clazz = runCatching { Class.forName(classes) }.getOrNull() ?: continue
+            val module = clazz.getField("INSTANCE").get(null) as? Module ?: clazz.getDeclaredConstructor().newInstance() as Module
+            if (canUse(clazz)) register(module) else continue
+
+            Logger.debug("registering module ${clazz.simpleName}")
+        }
+    }
 
     fun unregister(module: Module) {
         modules.remove(module.id.lowercase())
@@ -53,172 +97,5 @@ object ModuleManager {
 
     fun toggle(id: String) {
         getModule(id)?.toggle()
-    }
-
-    fun save() {
-        configDir.mkdirs()
-
-        if (configFile.exists() && configFile.length() > 0) {
-            backup()
-        }
-
-        val root = JsonObject()
-        val modulesJson = JsonObject()
-
-        for ((id, module) in modules) {
-            val moduleJson = JsonObject()
-
-            moduleJson.addProperty(
-                "enabled",
-                module.enabled,
-            )
-
-            for (setting in module.getSettings()) {
-                moduleJson.add(
-                    setting.name,
-                    gson.toJsonTree(setting.value),
-                )
-            }
-
-            modulesJson.add(id, moduleJson)
-        }
-
-        root.add("modules", modulesJson)
-
-        configFile.writer().use { writer ->
-            gson.toJson(root, writer)
-        }
-    }
-
-    fun load() {
-        configDir.mkdirs()
-
-        if (!configFile.exists()) {
-            configFile.createNewFile()
-            return
-        }
-
-        if (configFile.length() == 0L) {
-            return
-        }
-
-        val root = runCatching {
-            configFile.reader().use { reader ->
-                gson.fromJson(reader, JsonObject::class.java)
-            }
-        }.getOrElse {
-            Logger.error("Failed to load module config: ${it.message}")
-            return
-        }
-
-        val modulesJson = root.getAsJsonObject("modules")
-            ?: return
-
-        for ((id, moduleElement) in modulesJson.entrySet()) {
-            val module = modules[id] ?: continue
-
-            if (!moduleElement.isJsonObject) {
-                continue
-            }
-
-            val moduleJson = moduleElement.asJsonObject
-
-            if (moduleJson.has("enabled")) {
-                val enabled = runCatching {
-                    moduleJson.get("enabled").asBoolean
-                }.getOrDefault(false)
-
-                if (enabled) {
-                    module.enable()
-                } else {
-                    module.disable()
-                }
-            }
-
-            for (setting in module.getSettings()) {
-                val element = moduleJson.get(setting.name) ?: continue
-
-                setSettingValue(
-                    setting = setting,
-                    element = element,
-                )
-            }
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun setSettingValue(
-        setting: Setting<*>,
-        element: JsonElement,
-    ) {
-        if (element.isJsonNull) {
-            return
-        }
-
-        val value = when (setting.default) {
-            is Boolean -> runCatching {
-                element.asBoolean
-            }.getOrNull()
-
-            is Int -> runCatching {
-                element.asInt
-            }.getOrNull()
-
-            is Long -> runCatching {
-                element.asLong
-            }.getOrNull()
-
-            is Float -> runCatching {
-                element.asFloat
-            }.getOrNull()
-
-            is Double -> runCatching {
-                element.asDouble
-            }.getOrNull()
-
-            is String -> runCatching {
-                element.asString
-            }.getOrNull()
-
-            else -> {
-                Logger.error(
-                    "Unsupported setting type for '${setting.name}': " + setting.default!!::class.simpleName
-                )
-
-                return
-            }
-        }
-
-        if (value == null) {
-            Logger.error(
-                "Failed to load setting '${setting.name}'"
-            )
-
-            return
-        }
-
-        (setting as Setting<Any?>).set(value)
-    }
-
-    private fun backup() {
-        if (!configFile.exists()) {
-            return
-        }
-
-        configFile.copyTo(
-            target = backupFile,
-            overwrite = true,
-        )
-    }
-
-    fun restoreBackup() {
-        if (!backupFile.exists()) {
-            return
-        }
-
-        backupFile.copyTo(
-            target = configFile,
-            overwrite = true,
-        )
     }
 }
