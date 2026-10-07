@@ -28,33 +28,35 @@ object ModuleManager {
     }
 
     private fun canUse(clazz: Class<*>): Boolean {
-        if (clazz.isAnnotationPresent(DevModule::class.java)) {
-            if (!FabricLoader.getInstance().isDevelopmentEnvironment) return false
+        return when {
+            clazz.isAnnotationPresent(DevModule::class.java) -> {
+                if (!FabricLoader.getInstance().isDevelopmentEnvironment) return false
 
-            Logger.debug("registering dev module ${clazz.simpleName}")
-            return true
-        }
-
-        if (clazz.isAnnotationPresent(BetaModule::class.java)) {
-            if (modState == ModState.BETA || modState == ModState.ALPHA) {
-                Logger.debug("registering beta module ${clazz.simpleName}")
-                return true
+                Logger.debug("registering dev module ${clazz.simpleName}")
+                true
             }
+
+            clazz.isAnnotationPresent(BetaModule::class.java) -> {
+                if (modState != ModState.BETA && modState != ModState.ALPHA) return false
+
+                Logger.debug("registering beta module ${clazz.simpleName}")
+                true
+            }
+
+            clazz.isAnnotationPresent(AlphaModule::class.java) -> {
+                if (modState != ModState.ALPHA) return false
+
+                Logger.debug("registering alpha module ${clazz.simpleName}")
+                true
+            }
+
+            clazz.isAnnotationPresent(ReleaseModule::class.java) -> {
+                Logger.debug("registering release module ${clazz.simpleName}")
+                true
+            }
+
+            else -> false
         }
-
-        if (clazz.isAnnotationPresent(AlphaModule::class.java)) {
-            if (modState != ModState.ALPHA) return false
-
-            Logger.debug("registering alpha module ${clazz.simpleName}")
-            return true
-        }
-
-        if (clazz.isAnnotationPresent(ReleaseModule::class.java)) {
-            Logger.debug("registering release module ${clazz.simpleName}")
-            return true
-        }
-
-        return false
     }
 
     /*
