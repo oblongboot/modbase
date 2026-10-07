@@ -5,6 +5,8 @@ import com.example.mod.commands.impl.MainCommand
 import com.example.mod.events.EventManager
 import com.example.mod.events.FabricProvidedEvents
 import com.example.mod.events.impl.BlockChangeEvent
+import com.example.mod.events.impl.PacketSend
+import com.example.mod.events.impl.WorldRenderBeforeGizmos
 import com.example.mod.events.impl.packet.impl.SelfVelocityChangeEvent
 import com.example.mod.events.impl.packet.impl.SlotChangeEvent
 import com.example.mod.events.impl.packet.impl.TeleportEvent
@@ -13,8 +15,11 @@ import com.example.mod.module.ModState
 import com.example.mod.module.ModuleManager
 import com.example.mod.utils.ChatUtils
 import com.example.mod.utils.Logger
+import com.example.mod.utils.render.GizmoRenderer
 import net.fabricmc.api.ModInitializer
 import net.minecraft.resources.Identifier
+import net.minecraft.world.phys.Vec3
+import java.awt.Color
 
 object ModInit : ModInitializer {
 	const val MOD_ID: String = "modbase"
