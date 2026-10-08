@@ -1,9 +1,10 @@
 package com.example.mod.utils
 
-import java.util.UUID
+import com.example.mod.ModInit.mc
+import java.util.*
 import java.util.concurrent.Executors
 
-object AsyncUtils {
+object ThreadUtils {
     private val singleThreadExecutor = Executors.newSingleThreadExecutor { runnable ->
         Thread(runnable, "modbase-async-main").apply {
             isDaemon = true
@@ -31,6 +32,16 @@ object AsyncUtils {
             }.start()
         } else {
             singleThreadExecutor.execute(runnable)
+        }
+    }
+
+    fun runOnMainThreadIfNotAlready(code: () -> Unit) {
+        if (mc.isSameThread) {
+            code()
+        } else {
+            mc.execute {
+                code()
+            }
         }
     }
 }

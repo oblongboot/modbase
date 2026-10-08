@@ -1,10 +1,7 @@
 package com.example.mod.events.impl
 
 import com.example.mod.events.Event
-import com.example.mod.events.EventManager
 import com.mojang.authlib.GameProfile
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.multiplayer.chat.ChatListener
 import net.minecraft.network.chat.ChatType
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.PlayerChatMessage

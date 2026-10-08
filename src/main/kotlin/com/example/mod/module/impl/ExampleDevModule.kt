@@ -2,9 +2,7 @@ package com.example.mod.module.impl
 
 import com.example.mod.module.Module
 import com.example.mod.module.ModuleCategory
-import com.example.mod.module.annotation.AlphaModule
 import com.example.mod.module.annotation.DevModule
-import com.example.mod.module.annotation.ReleaseModule
 
 @DevModule
 object ExampleDevModule : Module(

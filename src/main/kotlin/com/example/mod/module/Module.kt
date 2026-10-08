@@ -1,5 +1,6 @@
 package com.example.mod.module
 
+import com.example.mod.ModInit.mc
 import net.minecraft.client.Minecraft
 
 open class Module(
@@ -9,7 +10,7 @@ open class Module(
     val description: String,
     defaultEnabled: Boolean = false,
 ) {
-    protected val mc: Minecraft = Minecraft.getInstance()
+    protected val minecraft: Minecraft = mc // probably not the best way to do this, but it works :D
 
     protected val player
         get() = mc.player

@@ -1,6 +1,6 @@
 package com.example.mod.utils
 
-import net.minecraft.client.Minecraft
+import com.example.mod.ModInit.mc
 import net.minecraft.network.chat.Component
 
 object ChatUtils {
@@ -8,13 +8,14 @@ object ChatUtils {
     private val debugPrefix = Component.literal("§8[§bmodbase Debug§8] ")
 
     fun modMessage(msg: String, useDebugPrefix: Boolean = false) {
-        val player = Minecraft.getInstance().player
+        val player = mc.player
 
         if (player === null) {
             Logger.error("failed to send message, null player. message is $msg")
             return@modMessage
         }
-        Minecraft.getInstance().execute {
+
+        ThreadUtils.runOnMainThreadIfNotAlready {
             player.sendSystemMessage(
                 (if (useDebugPrefix) debugPrefix else modbasePrefix).copy().append(Component.literal(msg)),
             )

@@ -7,6 +7,7 @@ object EventManager {
 
     private val events = mutableMapOf<KClass<out Event>, MutableList<EventListener<*>>>()
 
+    @JvmStatic
     fun <T : Event> register(
         eventClass: KClass<T>,
         vararg listeners: EventListener<T>
@@ -17,6 +18,7 @@ object EventManager {
         list.addAll(listeners as Array<out EventListener<*>>)
     }
 
+    @JvmStatic
     fun <T : Event> post(event: T) {
         val listeners = events[event::class] ?: return
 

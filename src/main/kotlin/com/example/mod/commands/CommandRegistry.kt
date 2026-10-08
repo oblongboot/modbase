@@ -2,7 +2,6 @@ package com.example.mod.commands
 
 import com.example.mod.commands.annotation.CommandHandler
 import com.example.mod.commands.annotation.SubCommand
-import com.example.mod.utils.ChatUtils
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback

@@ -18,7 +18,7 @@ public class MixinPacketEvent {
     private static void modbase$onPacketIncoming(Packet<?> packet, PacketListener packetlistener, CallbackInfo ci) {
         PacketReceive packetTwo = new PacketReceive(packet);
 
-        EventManager.INSTANCE.post(packetTwo);
+        EventManager.post(packetTwo);
 
         if (packetTwo.getCancelled()) {
             ci.cancel();
@@ -29,7 +29,7 @@ public class MixinPacketEvent {
     public void modbase$onPacketSend(Packet<?> packet, ChannelFutureListener listener, boolean flush, CallbackInfo ci) {
         PacketSend packetTwo = new PacketSend(packet);
 
-        EventManager.INSTANCE.post(packetTwo);
+        EventManager.post(packetTwo);
 
         if (packetTwo.getCancelled()) {
             ci.cancel();

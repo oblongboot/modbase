@@ -13,7 +13,7 @@ public class MixinClientPacketListener {
     @Inject(method = "sendChat", at = @At("HEAD"), cancellable = true)
     public void modbase$onChatSend(String msg, CallbackInfo ci) {
         ChatSend cs = new ChatSend(msg);
-        EventManager.INSTANCE.post(cs);
+        EventManager.post(cs);
 
         if (cs.getCancelled()) {
             ci.cancel();

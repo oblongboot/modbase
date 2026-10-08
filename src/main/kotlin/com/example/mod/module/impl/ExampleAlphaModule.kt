@@ -3,7 +3,6 @@ package com.example.mod.module.impl
 import com.example.mod.module.Module
 import com.example.mod.module.ModuleCategory
 import com.example.mod.module.annotation.AlphaModule
-import com.example.mod.module.annotation.ReleaseModule
 
 @AlphaModule
 object ExampleAlphaModule : Module(

@@ -1,8 +1,6 @@
 package com.example.mod.utils
 
 import net.fabricmc.loader.api.FabricLoader
-import net.fabricmc.loader.impl.FabricLoaderImpl
-import net.fabricmc.loader.impl.launch.FabricLauncherBase
 
 object Logger {
     private var isDebugEnabled = false
