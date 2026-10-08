@@ -10,6 +10,4 @@ object ExampleDevModule : Module(
     name = "Example Dev Module",
     description = "Example module that is accessible to devs",
     category = ModuleCategory.MISC,
-) {
-
-}
+)

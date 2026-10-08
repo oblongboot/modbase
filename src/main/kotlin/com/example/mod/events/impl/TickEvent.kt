@@ -2,7 +2,7 @@ package com.example.mod.events.impl
 
 import com.example.mod.events.Event
 
-abstract class TickEvent() : Event(cancellable = false)
+abstract class TickEvent : Event(cancellable = false)
 
-class TickStart() : TickEvent()
-class TickEnd() : TickEvent()
+class TickStart : TickEvent()
+class TickEnd : TickEvent()

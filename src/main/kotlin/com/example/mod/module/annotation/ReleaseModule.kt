@@ -4,4 +4,4 @@ package com.example.mod.module.annotation
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ReleaseModule()
+annotation class ReleaseModule

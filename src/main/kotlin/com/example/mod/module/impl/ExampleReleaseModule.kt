@@ -10,6 +10,4 @@ object ExampleReleaseModule : Module(
     name = "Example Release Module",
     description = "Example module that is accessible always",
     category = ModuleCategory.MISC,
-) {
-
-}
+)

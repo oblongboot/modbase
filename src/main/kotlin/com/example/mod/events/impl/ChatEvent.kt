@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.PlayerChatMessage
 import java.time.Instant
 
-abstract class ChatEvent() : Event(cancellable = true)
+abstract class ChatEvent : Event(cancellable = true)
 
 class ChatSend(val msg: String) : ChatEvent()
 class ChatReceive(val component: Component, val message: PlayerChatMessage?, val profile: GameProfile?, val bound: ChatType.Bound, val instant: Instant) : ChatEvent()

@@ -10,6 +10,4 @@ object ExampleBetaModule : Module(
     name = "Example Beta Module",
     description = "Example module that is accessible to beta",
     category = ModuleCategory.MISC,
-) {
-
-}
+)

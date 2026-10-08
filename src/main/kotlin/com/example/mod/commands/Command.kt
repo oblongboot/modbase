@@ -1,6 +1,6 @@
 package com.example.mod.commands
 
-open class Command constructor(
+open class Command(
     val names: List<String>,
     val description: String? = null,
 )
