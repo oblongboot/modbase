@@ -12,7 +12,7 @@ object ChatUtils {
 
         if (player === null) {
             Logger.error("failed to send message, null player. message is $msg")
-            return@modMessage
+            return
         }
 
         ThreadUtils.runOnMainThreadIfNotAlready {

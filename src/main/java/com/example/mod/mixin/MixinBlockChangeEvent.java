@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Level.class)
 abstract class MixinBlockChangeEvent {
-    @Inject(method = "setBlock", at = @At("HEAD"), cancellable = false)
-    private void modbase$onBlockChange(BlockPos BP, BlockState newBlockState, int flags, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "setBlock", at = @At("HEAD"))
+    private void modbase$onBlockChange(BlockPos BP, BlockState newBlockState, int flags, CallbackInfoReturnable<Boolean> ignoredCir) {
         assert ModInit.getMc().level != null;
         BlockState oldState = ModInit.getMc().level.getBlockState(BP);
 

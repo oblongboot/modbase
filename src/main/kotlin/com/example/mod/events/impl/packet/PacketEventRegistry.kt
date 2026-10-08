@@ -11,7 +11,7 @@ object PacketEventRegistry {
     inline fun <reified P : Any> register(
         noinline arg: (P) -> Event,
     ) {
-        Logger.debug("registering ${P::class.java.name} packetevent!")
+        Logger.debug("registering ${P::class.java.name} packet event!")
 
         handlers[P::class.java] = { packet ->
             listOf(arg(packet as P))
@@ -21,7 +21,7 @@ object PacketEventRegistry {
     inline fun <reified P : Any> registerMany(
         noinline arg: (P) -> List<Event>,
     ) {
-        Logger.debug("registering ${P::class.java.name} packetevent!")
+        Logger.debug("registering ${P::class.java.name} packet event!")
 
         handlers[P::class.java] = { packet ->
             arg(packet as P)

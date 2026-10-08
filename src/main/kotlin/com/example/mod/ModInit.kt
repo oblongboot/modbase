@@ -3,11 +3,12 @@ package com.example.mod
 import com.example.mod.commands.CommandRegistry
 import com.example.mod.commands.impl.MainCommand
 import com.example.mod.events.FabricProvidedEvents
-import com.example.mod.module.ConfigManager
+import com.example.mod.module.config.ConfigManager
 import com.example.mod.module.ModState
 import com.example.mod.module.ModuleManager
 import com.example.mod.utils.Logger
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.Identifier
 
@@ -23,6 +24,8 @@ object ModInit : ModInitializer {
 		CommandRegistry.register(
 			MainCommand
 		)
+
+		Logger.setDebug(FabricLoader.getInstance().isDevelopmentEnvironment)
 
 		FabricProvidedEvents.register()
 		ModuleManager.setModState(ModState.RELEASE)

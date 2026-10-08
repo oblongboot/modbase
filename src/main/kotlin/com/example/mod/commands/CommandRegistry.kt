@@ -27,8 +27,6 @@ object CommandRegistry {
     fun get(name: String): Command? =
         commands[name.lowercase()]
 
-    fun getAll() = commands
-
     private fun register(command: Command) {
         command.names.forEach { name ->
             val lowerName = name.lowercase()

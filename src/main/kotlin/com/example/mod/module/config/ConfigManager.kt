@@ -1,5 +1,8 @@
-package com.example.mod.module
+package com.example.mod.module.config
 
+import com.example.mod.module.Module
+import com.example.mod.module.ModuleManager
+import com.example.mod.module.Setting
 import com.example.mod.utils.Logger
 import com.google.gson.Gson
 import com.google.gson.JsonElement

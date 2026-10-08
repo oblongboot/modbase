@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class MixinAutoDiscover implements IMixinConfigPlugin {
     private String mixinPackage;
 
