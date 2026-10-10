@@ -1,0 +1,39 @@
+name: templateInit
+
+on: push
+
+permissions:
+  contents: write
+
+jobs:
+  templateInit:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: config git
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "Actions"
+
+      - name: run template init
+        if: github.repository != 'oblongboot/modbase'
+        run: |
+          ./templateInit.sh \
+            "com.${GITHUB_REPOSITORY//\//.}" \
+            "${{ github.event.repository.name }}" \
+            "${{ github.event.repository.name }}"
+
+      - name: Commit changes
+        if: github.repository != 'oblongboot/modbase'
+        run: |
+          git add .
+          git diff --cached --quiet || git commit -m "chore: init template"
+
+      - name: Push changes
+        if: github.repository != 'oblongboot/modbase'
+        run: git push
