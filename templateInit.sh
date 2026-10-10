@@ -51,12 +51,15 @@ for source in java kotlin; do
   old="$root/com/example/mod"
   new="$root/$package_dir"
 
+  [[ -d "$root" ]] || continue
+
   if [[ -d "$old" ]]; then
-    mkdir -p "$(dirname "$new")"
-    [[ ! -e "$new" ]] || {
+    if [[ -e "$new" ]]; then
       echo "Destination already exists: $new" >&2
       exit 1
-    }
+    fi
+
+    mkdir -p "$(dirname "$new")"
     mv -- "$old" "$new"
   fi
 
@@ -70,29 +73,37 @@ for source in java kotlin; do
   rmdir "$root/com" 2>/dev/null || true
 done
 
-for kind in f d; do
-  if [[ "$kind" == f ]]; then
-    find "$base/src/main/resources" -depth -type f -name '*modbase*' \
-      -exec bash -c '
-        replacement=$1
-        shift
-        for path do
-          target="${path//modbase/$replacement}"
-          [[ "$path" == "$target" ]] || mv -- "$path" "$target"
-        done
-      ' bash "$modid" {} +
-  else
-    find "$base/src/main/resources" -depth -type d -name '*modbase*' \
-      -exec bash -c '
-        replacement=$1
-        shift
-        for path do
-          target="${path//modbase/$replacement}"
-          [[ "$path" == "$target" ]] || mv -- "$path" "$target"
-        done
-      ' bash "$modid" {} +
-  fi
-done
+if [[ -d "$base/src/main/resources" ]]; then
+  for kind in f d; do
+    if [[ "$kind" == f ]]; then
+      find "$base/src/main/resources" -depth -type f -name '*modbase*' \
+        -exec bash -c '
+          replacement=$1
+          shift
+          for path do
+            name="$(basename -- "$path")"
+            target="$(dirname -- "$path")/${name//modbase/$replacement}"
+            if [[ "$path" != "$target" ]]; then
+              mv -- "$path" "$target"
+            fi
+          done
+        ' bash "$modid" {} +
+    else
+      find "$base/src/main/resources" -depth -type d -name '*modbase*' \
+        -exec bash -c '
+          replacement=$1
+          shift
+          for path do
+            name="$(basename -- "$path")"
+            target="$(dirname -- "$path")/${name//modbase/$replacement}"
+            if [[ "$path" != "$target" ]]; then
+              mv -- "$path" "$target"
+            fi
+          done
+        ' bash "$modid" {} +
+    fi
+  done
+fi
 
 rm -f "$base/.github/workflows/templateInit.yml"
 rm -- "$script_path"
